@@ -78,11 +78,11 @@ public class Calculator {
         return total / gpas.size();
     }
 
-    public static void toDMS(double degrees) {
+    public static String toDMS(double degrees) {
         int d = (int) degrees;
         int m = (int) ((degrees - d) * 60);
         double s = (degrees - d - m / 60.0) * 3600;
-        System.out.println(d + "°" + m + "'" + s + "\"");
+        return d + "°" + m + "'" + s + "\"";
     }
 
     public static double fromDMS(int degrees, int minutes, double seconds) {

@@ -10,7 +10,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class CalculatorUI implements ActionListener {
+public class CalculatorUI  {
     public static void main(String[] args) {
         showMainMenu();
     }
@@ -133,7 +133,7 @@ public class CalculatorUI implements ActionListener {
         frame.setVisible(true);
     }
 
-    private static class BasicButtonClickListener implem~ents ActionListener {
+    private static class BasicButtonClickListener implements ActionListener {
         private final JTextField inputField;
         private final JFrame frame;
         private final JFrame previousFrame;
@@ -309,18 +309,29 @@ public class CalculatorUI implements ActionListener {
                             result = Long.toString(Calculator.factorial(input));
                             break;
                         case "Prime Check":
-                            result = Boolean.toString(Calculator.isPrime(input));
+                            boolean isPrime = Calculator.isPrime(input);
+                            if (isPrime) {
+                                result = input + " is a Prime number!";
+                            } else {
+                                result = input + " is not a Prime number!";
+                            }
                             break;
                         case "Divisibility Check":
                             String[] values = JOptionPane.showInputDialog("Enter two numbers separated by a comma:").split(",");
                             int a = Integer.parseInt(values[0].trim());
                             int b = Integer.parseInt(values[1].trim());
-                            result = Boolean.toString(Calculator.isDivisible(a, b));
+                            boolean isDivisible = Calculator.isDivisible(a, b);
+                            if (isDivisible) {
+                                result = a + " is divisible by " + b;
+                            } else {
+                                result = a + " is not divisible by " + b;
+                            }
                             break;
                     }
-
+                    
+                    // Display the result in the resultLabel
                     resultLabel.setText("Result: " + result);
-                    History.addHistory(operation + "(" + input + ") = " + result);
+                    History.addHistory(operation + "(" + inputField.getText() + ") = " + result);
                 } catch (Exception ex) {
                     resultLabel.setText("Error: " + ex.getMessage());
                 }
@@ -338,6 +349,7 @@ public class CalculatorUI implements ActionListener {
                 currentFrame.setVisible(true);
             }
         });
+        frame.add(new JLabel()); // Empty label for spacing
         frame.add(backButton);
 
         frame.setVisible(true);
@@ -485,7 +497,6 @@ public class CalculatorUI implements ActionListener {
                 currentFrame.setVisible(true);
             }
         });
-
         frame.add(new JLabel()); // Empty label for spacing
         frame.add(backButton);
 
@@ -575,12 +586,12 @@ public class CalculatorUI implements ActionListener {
                     }
 
                     resultLabel.setText("Result: " + result);
+                    History.addHistory(calculation + "(" + inputField.getText() + ") = " + result);
                 } catch (Exception ex) {
                     resultLabel.setText("Error: " + ex.getMessage());
                 }
             }
         });
-
         frame.add(calculateButton);
         frame.add(resultLabel);
 
@@ -589,10 +600,9 @@ public class CalculatorUI implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
-                previousFrame.setVisible(true);
+                currentFrame.setVisible(true);
             }
         });
-
         frame.add(new JLabel()); // Empty label for spacing
         frame.add(backButton);
 
@@ -680,15 +690,19 @@ public class CalculatorUI implements ActionListener {
                             result = Double.toString(new Random().nextDouble());
                             break;
                         case "Degrees to DMS":
-                            result = Calculator.degreesToDMS(input);
+                            result = Calculator.toDMS(input);
                             break;
                         case "DMS to Degrees":
-                            result = Double.toString(Calculator.DMSToDegrees(inputField.getText()));
+                            String[] dmsValues = inputField.getText().split(",");
+                            int degrees = Integer.parseInt(dmsValues[0].trim());
+                            int minutes = Integer.parseInt(dmsValues[1].trim());
+                            double seconds = Double.parseDouble(dmsValues[2].trim());
+                            result = Double.toString(Calculator.fromDMS(degrees, minutes, seconds));
                             break;
                     }
 
                     resultLabel.setText("Result: " + result);
-                    History.addHistory(operation + "(" + input + ") = " + result);
+                    History.addHistory(operation + "(" + inputField.getText() + ") = " + result);
                 } catch (Exception ex) {
                     resultLabel.setText("Error: " + ex.getMessage());
                 }
@@ -706,193 +720,8 @@ public class CalculatorUI implements ActionListener {
                 currentFrame.setVisible(true);
             }
         });
-
+        frame.add(new JLabel()); // Empty label for spacing
         frame.add(backButton);
-
-        frame.setVisible(true);
-    }
-
-    public static void showMainMenu2() {
-        JFrame frame = new JFrame("Advanced Calculator");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
-        frame.setLayout(new GridLayout(10, 1));
-
-        String[] buttons = {"Basic Operations", "Scientific Operations", "Special Operations", "Unit Conversion",
-                            "GPA and CGPA Calculator", "Functional Operations", "View History", "Clear History", "Exit"};
-
-        for (String text : buttons) {
-            JButton button = new JButton(text);
-            button.addActionListener(new MainMenuButtonClickListener(frame, text));
-            frame.add(button);
-        }
-
-        frame.setVisible(true);
-    }
-
-    private static class MainMenuButtonClickListener2 implements ActionListener {
-        private final JFrame frame;
-        private final String command;
-
-        public MainMenuButtonClickListener2(JFrame frame, String command) {
-            this.frame = frame;
-            this.command = command;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            frame.dispose();
-            switch (command) {
-                case "Basic Operations":
-                    showBasicCalculator(frame);
-                    break;
-                case "Scientific Operations":
-                    showScientificCalculator(frame);
-                    break;
-                case "Special Operations":
-                    showSpecialOperationsMenu(frame);
-                    break;
-                case "Unit Conversion":
-                    showUnitConversionMenu(frame);
-                    break;
-                case "GPA and CGPA Calculator":
-                    showGpaCgpaMenu(frame);
-                    break;
-                case "Functional Operations":
-                    showFunctionalOperationsMenu(frame);
-                    break;
-                case "View History":
-                    HistoryUI.showHistory();
-                    break;
-                case "Clear History":
-                    History.clearHistory();
-                    JOptionPane.showMessageDialog(null, "History has been cleared", "Info", JOptionPane.INFORMATION_MESSAGE);
-                    showMainMenu();
-                    break;
-                case "Exit":
-                    System.exit(0);
-                    break;
-            }
-        }
-    }
-
-    // public static void main(String[] args) {
-    //     showMainMenu();
-    // }
-}
-
-class Calculator {
-    public static long factorial(int n) {
-        if (n < 0) throw new IllegalArgumentException("Number must be non-negative.");
-        long result = 1;
-        for (int i = 1; i <= n; i++) {
-            result *= i;
-        }
-        return result;
-    }
-
-    public static boolean isPrime(int n) {
-        if (n <= 1) return false;
-        for (int i = 2; i <= Math.sqrt(n); i++) {
-            if (n % i == 0) return false;
-        }
-        return true;
-    }
-
-    public static boolean isDivisible(int a, int b) {
-        return a % b == 0;
-    }
-
-    public static double celsiusToFahrenheit(double celsius) {
-        return (celsius * 9/5) + 32;
-    }
-
-    public static double dollarToBDT(double dollar) {
-        return dollar * 85; // Example conversion rate
-    }
-
-    public static double calculateGPA(List<Map.Entry<Integer, Double>> grades) {
-        int totalCredits = 0;
-        double totalPoints = 0.0;
-
-        for (Map.Entry<Integer, Double> grade : grades) {
-            int credits = grade.getKey();
-            double points = grade.getValue();
-
-            totalCredits += credits;
-            totalPoints += credits * points;
-        }
-
-        return totalPoints / totalCredits;
-    }
-
-    public static double calculateCGPA(List<Double> gpas) {
-        double totalGPA = 0.0;
-
-        for (double gpa : gpas) {
-            totalGPA += gpa;
-        }
-
-        return totalGPA / gpas.size();
-    }
-
-    public static String degreesToDMS(double degrees) {
-        int d = (int) degrees;
-        int m = (int) ((degrees - d) * 60);
-        double s = (degrees - d - m / 60.0) * 3600;
-        return d + "°" + m + "'" + s + "\"";
-    }
-
-    public static double DMSToDegrees(String dms) {
-        String[] parts = dms.split("[°'\"]");
-        double degrees = Double.parseDouble(parts[0]);
-        double minutes = Double.parseDouble(parts[1]) / 60;
-        double seconds = Double.parseDouble(parts[2]) / 3600;
-        return degrees + minutes + seconds;
-    }
-}
-
-class History {
-    private static List<String> history = new ArrayList<>();
-
-    public static void addHistory(String record) {
-        history.add(record);
-    }
-
-    public static List<String> getHistory() {
-        return history;
-    }
-
-    public static void clearHistory() {
-        history.clear();
-    }
-}
-
-class HistoryUI {
-    public static void showHistory() {
-        JFrame frame = new JFrame("History");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 400);
-        frame.setLayout(new BorderLayout());
-
-        JTextArea historyArea = new JTextArea();
-        historyArea.setEditable(false);
-        for (String record : History.getHistory()) {
-            historyArea.append(record + "\n");
-        }
-
-        frame.add(new JScrollPane(historyArea), BorderLayout.CENTER);
-
-        JButton backButton = new JButton("Back");
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-                CalculatorUI.showMainMenu();
-            }
-        });
-
-        frame.add(backButton, BorderLayout.SOUTH);
 
         frame.setVisible(true);
     }
