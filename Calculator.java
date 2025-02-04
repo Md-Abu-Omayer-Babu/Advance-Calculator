@@ -57,7 +57,7 @@ public class Calculator {
     }
 
     public static double dollarToBDT(double dollar) {
-        return dollar * 85; // Example conversion rate
+        return dollar * 122; // Example conversion rate
     }
 
     public static double calculateGPA(List<Map.Entry<Integer, Double>> grades) {

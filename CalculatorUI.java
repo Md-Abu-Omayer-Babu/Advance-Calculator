@@ -288,59 +288,76 @@ public class CalculatorUI  {
         JFrame frame = new JFrame(operation);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(400, 200);
-        frame.setLayout(new GridLayout(4, 2)); // Adjusted to include the Back button
-
-        JTextField inputField = new JTextField();
+        frame.setLayout(new GridLayout(5, 2)); // Adjusted to include the extra input field and the Back button
+    
+        JTextField inputField1 = new JTextField();
+        JTextField inputField2 = new JTextField(); // For divisor in divisibility check
         JLabel resultLabel = new JLabel("Result: ");
-
-        frame.add(new JLabel("Input:"));
-        frame.add(inputField);
-
+    
+        frame.add(new JLabel("Input Divident:"));
+        frame.add(inputField1);
+    
+        if (operation.equals("Divisibility Check")) {
+            frame.add(new JLabel("Input Divisor:"));
+            frame.add(inputField2);
+        } else {
+            frame.add(new JLabel()); // Empty label for spacing
+            frame.add(new JLabel()); // Empty label for spacing
+        }
+    
         JButton calculateButton = new JButton("Calculate");
         calculateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    int input = Integer.parseInt(inputField.getText());
                     String result = "";
-
+                    int input1 = Integer.parseInt(inputField1.getText());
+    
                     switch (operation) {
                         case "Factorial":
-                            result = Long.toString(Calculator.factorial(input));
+                            result = Long.toString(Calculator.factorial(input1));
                             break;
                         case "Prime Check":
-                            boolean isPrime = Calculator.isPrime(input);
-                            if (isPrime) {
-                                result = input + " is a Prime number!";
+                            boolean isPrime = Calculator.isPrime(input1);
+                            if (isPrime == true) {
+                                result = input1 + " is a Prime number!";
                             } else {
-                                result = input + " is not a Prime number!";
+                                result = input1 + " is not a Prime number!";
                             }
                             break;
                         case "Divisibility Check":
-                            String[] values = JOptionPane.showInputDialog("Enter two numbers separated by a comma:").split(",");
-                            int a = Integer.parseInt(values[0].trim());
-                            int b = Integer.parseInt(values[1].trim());
-                            boolean isDivisible = Calculator.isDivisible(a, b);
+                            if (inputField2.getText().isEmpty()) {
+                                throw new IllegalArgumentException("Please enter the divisor in the second input field.");
+                            }
+                            int input2 = Integer.parseInt(inputField2.getText());
+                            boolean isDivisible = Calculator.isDivisible(input1, input2);
                             if (isDivisible) {
-                                result = a + " is divisible by " + b;
+                                result = input1 + " is divisible by " + input2;
                             } else {
-                                result = a + " is not divisible by " + b;
+                                result = input1 + " is not divisible by " + input2;
                             }
                             break;
+                        default:
+                            result = "Invalid operation!";
+                            break;
                     }
-                    
+    
                     // Display the result in the resultLabel
                     resultLabel.setText("Result: " + result);
-                    History.addHistory(operation + "(" + inputField.getText() + ") = " + result);
-                } catch (Exception ex) {
+                    History.addHistory(operation + "(" + inputField1.getText() + (operation.equals("Divisibility Check") ? ", " + inputField2.getText() : "") + ") = " + result);
+                } catch (NumberFormatException ex) {
+                    resultLabel.setText("Error: Invalid input. Please enter a valid number.");
+                } catch (IllegalArgumentException ex) {
                     resultLabel.setText("Error: " + ex.getMessage());
+                } catch (Exception ex) {
+                    resultLabel.setText("Error: An unexpected error occurred.");
                 }
             }
         });
-
+    
         frame.add(calculateButton);
         frame.add(resultLabel);
-
+    
         JButton backButton = new JButton("Back");
         backButton.addActionListener(new ActionListener() {
             @Override
@@ -351,7 +368,7 @@ public class CalculatorUI  {
         });
         frame.add(new JLabel()); // Empty label for spacing
         frame.add(backButton);
-
+    
         frame.setVisible(true);
     }
 
