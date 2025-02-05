@@ -22,7 +22,7 @@ public class CalculatorUI {
         frame.setLayout(new GridLayout(10, 1));
 
         String[] buttons = { "Basic Operations", "Scientific Operations", "Special Operations", "Unit Conversion",
-                "GPA and CGPA Calculator", "Functional Operations", "View History", "Exit" };
+                "Result Calculator", "Functional Operations", "View History", "Exit" };
 
         for (String text : buttons) {
             JButton button = new JButton(text);
@@ -58,8 +58,8 @@ public class CalculatorUI {
                 case "Unit Conversion":
                     showUnitConversionMenu(frame);
                     break;
-                case "GPA and CGPA Calculator":
-                    showGpaCgpaMenu(frame);
+                case "Result Calculator":
+                    ResultSystem.resultCalculation(frame);
                     break;
                 case "Functional Operations":
                     showFunctionalOperationsMenu(frame);
@@ -69,11 +69,11 @@ public class CalculatorUI {
                     frame.setVisible(false); // Hide current window
                     break;
                 // case "Clear History":
-                //     History.clearHistory();
-                //     JOptionPane.showMessageDialog(null, "History has been cleared", "Info",
-                //             JOptionPane.INFORMATION_MESSAGE);
-                //     showMainMenu();
-                //     break;
+                // History.clearHistory();
+                // JOptionPane.showMessageDialog(null, "History has been cleared", "Info",
+                // JOptionPane.INFORMATION_MESSAGE);
+                // showMainMenu();
+                // break;
                 case "Exit":
                     System.exit(0);
                     break;
@@ -113,23 +113,23 @@ public class CalculatorUI {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(800, 600);
         frame.setLayout(new BorderLayout());
-    
+
         JTextField inputField = new JTextField();
         frame.add(inputField, BorderLayout.NORTH);
-    
+
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(5, 3));
-    
+
         String[] buttons = { "Sine", "Cosine", "Tangent", "Secant", "Cosecant", "Cotangent",
                 "Exponentiation", "Natural Logarithm (ln)", "Logarithm Base 10 (log)",
-                "Nth Root", "Reciprocal"};
-    
+                "Nth Root", "Reciprocal" };
+
         for (String text : buttons) {
             JButton button = new JButton(text);
             button.addActionListener(new ScientificButtonClickListener(inputField, frame, previousFrame));
             panel.add(button);
         }
-    
+
         JButton backButton = new JButton("Back");
         backButton.addActionListener(e -> {
             frame.dispose();
@@ -137,17 +137,16 @@ public class CalculatorUI {
                 previousFrame.setVisible(true);
             }
         });
-    
+
         panel.add(backButton);
         frame.add(panel, BorderLayout.CENTER);
-    
+
         if (previousFrame != null) {
             previousFrame.setVisible(false); // Hide the previous window only if it exists
         }
-    
+
         frame.setVisible(true);
     }
-    
 
     private static class BasicButtonClickListener implements ActionListener {
         private final JTextField inputField;
@@ -192,32 +191,32 @@ public class CalculatorUI {
         private final JTextField inputField;
         private final JFrame frame;
         private final JFrame previousFrame;
-    
+
         public ScientificButtonClickListener(JTextField inputField, JFrame frame, JFrame previousFrame) {
             this.inputField = inputField;
             this.frame = frame;
             this.previousFrame = previousFrame;
         }
-    
+
         @Override
         public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
             try {
                 String result = "";
                 String inputText = inputField.getText().trim();
-    
+
                 double input = 0;
-    
+
                 // Handle cases where input is empty for most operations except Nth Root
                 if (!command.equals("Nth Root") && inputText.isEmpty()) {
                     inputField.setText("Error: No input");
                     return;
                 }
-    
+
                 if (!command.equals("Nth Root")) {
                     input = Double.parseDouble(inputText);
                 }
-    
+
                 switch (command) {
                     case "Sine":
                         result = Double.toString(Math.sin(Math.toRadians(input)));
@@ -247,21 +246,22 @@ public class CalculatorUI {
                         result = Double.toString(Math.log10(input));
                         break;
                     case "Nth Root":
-                        String[] rootValues = JOptionPane.showInputDialog(frame, "Enter base and root separated by a comma:")
+                        String[] rootValues = JOptionPane
+                                .showInputDialog(frame, "Enter base and root separated by a comma:")
                                 .split(",");
                         if (rootValues.length != 2) {
                             inputField.setText("Error: Invalid input");
                             return;
                         }
-    
+
                         double base = Double.parseDouble(rootValues[0].trim());
                         double root = Double.parseDouble(rootValues[1].trim());
-    
+
                         if (root == 0) {
                             inputField.setText("Error: Cannot take 0th root");
                             return;
                         }
-    
+
                         result = Double.toString(Math.pow(base, 1.0 / root));
                         break;
                     case "Reciprocal": // Inverse of the input(e.g. reciprocal(x) = 1 / x)
@@ -272,7 +272,7 @@ public class CalculatorUI {
                         previousFrame.setVisible(true);
                         return;
                 }
-    
+
                 inputField.setText(result);
                 History.addHistory(command + "(" + inputText + ") = " + result);
             } catch (Exception ex) {
@@ -280,7 +280,7 @@ public class CalculatorUI {
             }
         }
     }
-    
+
     public static void showSpecialOperationsMenu(JFrame previousFrame) {
         JFrame frame = new JFrame("Special Operations");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -641,112 +641,9 @@ public class CalculatorUI {
         frame.setVisible(true);
     }
 
-    public static void showGpaCgpaMenu(JFrame previousFrame) {
-        JFrame frame = new JFrame("GPA and CGPA Calculator");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 400);
-        frame.setLayout(new GridLayout(4, 1));
 
-        String[] buttons = { "Calculate GPA", "Calculate CGPA", "Back" };
-
-        for (String text : buttons) {
-            JButton button = new JButton(text);
-            button.addActionListener(new GpaCgpaButtonClickListener(frame, previousFrame, text));
-            frame.add(button);
-        }
-
-        frame.setVisible(true);
-    }
-
-    private static class GpaCgpaButtonClickListener implements ActionListener {
-        private final JFrame frame;
-        private final JFrame previousFrame;
-        private final String command;
-
-        public GpaCgpaButtonClickListener(JFrame frame, JFrame previousFrame, String command) {
-            this.frame = frame;
-            this.previousFrame = previousFrame;
-            this.command = command;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            frame.dispose();
-            switch (command) {
-                case "Calculate GPA":
-                case "Calculate CGPA":
-                    performGpaCgpaCalculation(command, frame, previousFrame);
-                    break;
-                case "Back":
-                    previousFrame.setVisible(true);
-                    break;
-            }
-        }
-    }
-
-    private static void performGpaCgpaCalculation(String calculation, JFrame currentFrame, JFrame previousFrame) {
-        JFrame frame = new JFrame(calculation);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 200);
-        frame.setLayout(new GridLayout(4, 2)); // Adjusted to include the Back button
-
-        JTextField inputField = new JTextField();
-        JLabel resultLabel = new JLabel("Result: ");
-
-        frame.add(new JLabel("Input:"));
-        frame.add(inputField);
-
-        JButton calculateButton = new JButton("Calculate");
-        calculateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    String result = "";
-
-                    switch (calculation) {
-                        case "Calculate GPA":
-                            List<Map.Entry<Integer, Double>> grades = new ArrayList<>();
-                            String[] entries = inputField.getText().split(";");
-                            for (String entry : entries) {
-                                String[] grade = entry.split(",");
-                                grades.add(new AbstractMap.SimpleEntry<>(Integer.parseInt(grade[0].trim()),
-                                        Double.parseDouble(grade[1].trim())));
-                            }
-                            result = Double.toString(Calculator.calculateGPA(grades));
-                            break;
-                        case "Calculate CGPA":
-                            List<Double> gpas = new ArrayList<>();
-                            String[] gpaValues = inputField.getText().split(",");
-                            for (String gpa : gpaValues) {
-                                gpas.add(Double.parseDouble(gpa.trim()));
-                            }
-                            result = Double.toString(Calculator.calculateCGPA(gpas));
-                            break;
-                    }
-
-                    resultLabel.setText("Result: " + result);
-                    History.addHistory(calculation + "(" + inputField.getText() + ") = " + result);
-                } catch (Exception ex) {
-                    resultLabel.setText("Error: " + ex.getMessage());
-                }
-            }
-        });
-        frame.add(calculateButton);
-        frame.add(resultLabel);
-
-        JButton backButton = new JButton("Back");
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-                currentFrame.setVisible(true);
-            }
-        });
-        frame.add(new JLabel()); // Empty label for spacing
-        frame.add(backButton);
-
-        frame.setVisible(true);
-    }
+    // result calculation
+    
 
     public static void showFunctionalOperationsMenu(JFrame previousFrame) {
         JFrame frame = new JFrame("Functional Operations");

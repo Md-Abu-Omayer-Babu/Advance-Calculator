@@ -32,7 +32,8 @@ public class Calculator {
     }
 
     public static long factorial(int value) {
-        if (value < 0) throw new IllegalArgumentException("Value must be non-negative");
+        if (value < 0)
+            throw new IllegalArgumentException("Value must be non-negative");
         long result = 1;
         for (int i = 1; i <= value; i++) {
             result *= i;
@@ -41,9 +42,11 @@ public class Calculator {
     }
 
     public static boolean isPrime(int value) {
-        if (value <= 1) return false;
+        if (value <= 1)
+            return false;
         for (int i = 2; i <= Math.sqrt(value); i++) {
-            if (value % i == 0) return false;
+            if (value % i == 0)
+                return false;
         }
         return true;
     }
@@ -53,7 +56,7 @@ public class Calculator {
     }
 
     public static double celsiusToFahrenheit(double celsius) {
-        return (celsius * 9/5) + 32;
+        return (celsius * 9 / 5) + 32;
     }
 
     public static double dollarToBDT(double dollar) {
@@ -61,21 +64,18 @@ public class Calculator {
     }
 
     public static double calculateGPA(List<Map.Entry<Integer, Double>> grades) {
-        double totalPoints = 0;
-        int totalCredits = 0;
+        double totalPoints = 0, totalCredits = 0;
         for (Map.Entry<Integer, Double> grade : grades) {
-            totalPoints += grade.getValue() * grade.getKey();
             totalCredits += grade.getKey();
+            totalPoints += grade.getKey() * grade.getValue();
         }
-        return totalPoints / totalCredits;
+        return totalCredits > 0 ? totalPoints / totalCredits : 0;
     }
 
     public static double calculateCGPA(List<Double> gpas) {
-        double total = 0;
-        for (double gpa : gpas) {
-            total += gpa;
-        }
-        return total / gpas.size();
+        if (gpas.isEmpty())
+            return 0;
+        return gpas.stream().mapToDouble(Double::doubleValue).average().orElse(0);
     }
 
     public static String toDMS(double degrees) {
