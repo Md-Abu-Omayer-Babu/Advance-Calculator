@@ -1,4 +1,4 @@
 cd F:\Calculator\cal8
-javac -cp ".;exp4j-0.4.8.jar" -d bin Calculator.java CalculatorUI.java History.java HistoryUI.java
+javac -cp ".;exp4j-0.4.8.jar" -d bin Calculator.java CalculatorUI.java History.java HistoryUI.java ResultSystem.java
 cd bin
 java -cp ".;../exp4j-0.4.8.jar" CalculatorUI
