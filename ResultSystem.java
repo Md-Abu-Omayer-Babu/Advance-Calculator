@@ -114,7 +114,7 @@ public class ResultSystem {
         try {
             String courseName = courseNameField.getText();
             String courseCode = courseCodeField.getText();
-            int credit = Integer.parseInt(creditField.getText());
+            double credit = Double.parseDouble(creditField.getText());
             double marks = Double.parseDouble(marksField.getText());
             double gradePoint = getGradePoint(marks);
 
@@ -134,7 +134,7 @@ public class ResultSystem {
         }
 
         double totalGradePoints = 0;
-        int totalCredits = 0;
+        double totalCredits = 0;
 
         for (Course course : courses) {
             totalGradePoints += course.gradePoint * course.credit;
@@ -224,9 +224,10 @@ public class ResultSystem {
 
 class Course {
     String name, code;
-    int credit;
+    double credit;  // Change from int to double
     double marks, gradePoint;
-    public Course(String name, String code, int credit, double marks, double gradePoint) {
+
+    public Course(String name, String code, double credit, double marks, double gradePoint) {
         this.name = name;
         this.code = code;
         this.credit = credit;
@@ -234,3 +235,4 @@ class Course {
         this.gradePoint = gradePoint;
     }
 }
+
